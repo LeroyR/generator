@@ -1,4 +1,17 @@
-((:release "0.35" nil
+((:release "0.36" nil)
+
+ (:release "0.35" "2023-10-09"
+
+  (:bugfix
+   "Generating Jenkins jobs for projects which use the" (:verb "archive")
+   "scm no longer fails.")
+
+  (:enhancement
+   "The Jenkins installation performed by the" (:verb "install-jenkins")
+   "command now includes the" (:verb "permissive-script-security") "plugin
+    which circumvents the approval mechanism for Groovy scripts. Please
+    review the security implications before using a Jenkins installation
+    created using the" (:verb "install-jenkins") "command.")
 
   (:enhancement
    "When a project which uses GIT SCM specifies a sub directory, Jenkins
