@@ -1,6 +1,6 @@
 ;;;; aspects.lisp --- Aspect definitions
 ;;;;
-;;;; Copyright (C) 2012-2019 Jan Moringen
+;;;; Copyright (C) 2012-2022 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -65,16 +65,21 @@
                 (kind (assoc-value value :kind))
                 (kind (var:as kind '(or (eql :text)
                                         (eql :string)
-                                        (eql :boolean))
+                                        (eql :boolean)
+                                        (eql :password))
                               :if-type-mismatch nil)))
-      (values
-       (list* :name name
-              :kind kind
-              (append (when-let ((default (assoc-value value :default)))
-                        `(:default ,default))
-                      (when-let ((description (assoc-value value :description)))
-                        `(:description ,description))))
-       t))))
+      (let ((default (assoc-value value :default)))
+        (cond ((and (eq kind :password) default)
+               nil)
+              (t
+               (values
+                (list* :name name
+                       :kind kind
+                       (append (when default
+                                 `(:default ,default))
+                               (when-let ((description (assoc-value value :description)))
+                                 `(:description ,description))))
+                t)))))))
 
 (defmethod var:as ((value t) (type (eql 'parameter-entry/legacy))
                    &key if-type-mismatch)
@@ -121,12 +126,13 @@
 
        NAME is the name of the parameter.
 
-       KIND is either text or string and controls which values are
-       acceptable for the parameter and NAME is the name of the
-       parameter.
+       KIND is one of \"text\", \"string\", \"boolean\" or
+       \"password\" and controls which values are acceptable for the
+       parameter and NAME is the name of the parameter.
 
        DEFAULT is optional and, if present, specifies the default
-       value of the parameter.
+       value of the parameter. The kind \"password\" does not allow a
+       default value.
 
        DESCRIPTION is optional and, if present, specifies a
        description Jenkins should present alongside the parameter.
@@ -298,21 +304,26 @@
                                 (member character '(#\_)))))
                  string))
 
-(defun wrap-shell-command (command pre post)
-  (cond
-    ((or pre post)
-     (let+ (((rest &optional (shebang ""))
-             (if (starts-with-subseq "#!" command)
-                 (let ((index (position #\Newline command)))
-                   (list (subseq command (1+ index)) (subseq command 0 (1+ index))))
-                 (list command))))
-       (concatenate 'string shebang (or pre "") rest (or post ""))))
-    (t
-     command)))
+(defun wrap-shell-command (stream command pre post)
+  (flet ((do-it (stream)
+           (if (or pre post)
+               (destructuring-bind (rest &optional (shebang ""))
+                   (if (starts-with-subseq "#!" command)
+                       (let ((index (position #\Newline command)))
+                         (list (subseq command (1+ index)) (subseq command 0 (1+ index))))
+                       (list command))
+                 (write-string shebang stream)
+                 (when pre (write-string pre stream))
+                 (write-string rest stream)
+                 (when post (write-string post stream)))
+               (write-string command stream))))
+    (if (null stream)
+        (with-output-to-string (stream) (do-it stream))
+        (do-it stream))))
 
-(defmacro wrapped-shell-command ((aspect-name
-                                  &optional (builder-name '#:command))
-                                 &body body)
+(defmacro as-shell-command ((stream aspect-name
+                             &optional (builder-name '#:command))
+                            &body body)
   (let+ (((&flet make-variable (suffix when)
             (let ((name (let ((*package* (find-package '#:keyword)))
                           (symbolicate aspect-name '#:. builder-name suffix)))
@@ -328,7 +339,8 @@
           (make-variable '#:.prefix "before"))
          ((&values suffix-var-name suffix-var-form)
           (make-variable '#:.suffix "after")))
-    `(wrap-shell-command (progn
+    `(wrap-shell-command ,stream
+                         (progn
                            ,prefix-var-form
                            ,suffix-var-form
                            ,@body)
@@ -441,8 +453,9 @@
        ."))
   "Configures user and group permissions for the generated job."
   (let+ (((&flet+ normalize-permission ((subject action))
-            (list subject (mapcar (compose #'make-keyword #'string-upcase)
-                                  action)))))
+            (let ((action (mapcar (compose #'make-keyword #'string-upcase)
+                                  action)))
+              (list subject action :kind :user)))))
     (unless (eq permissions :keep)
       (setf (jenkins.api:permissions job)
             (mapcar #'normalize-permission permissions)))))

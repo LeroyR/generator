@@ -1,4 +1,114 @@
-((:release "0.33" nil
+((:release "0.36" nil)
+
+ (:release "0.35" "2023-10-09"
+
+  (:bugfix
+   "Generating Jenkins jobs for projects which use the" (:verb "archive")
+   "scm no longer fails.")
+
+  (:enhancement
+   "The Jenkins installation performed by the" (:verb "install-jenkins")
+   "command now includes the" (:verb "permissive-script-security") "plugin
+    which circumvents the approval mechanism for Groovy scripts. Please
+    review the security implications before using a Jenkins installation
+    created using the" (:verb "install-jenkins") "command.")
+
+  (:enhancement
+   "When a project which uses GIT SCM specifies a sub directory, Jenkins
+    SCM polling is now configured to ignore repository changes outside
+    of that sub directory.")
+
+  (:enhancement
+   "The generator can now produce output for targets other than
+    Jenkins jobs. The" (:verb "generate") "command will be supported
+    for backward compatibility, but the new" (:verb "generate-jenkins")
+   "command should be used in newly written invocations. Additional targets
+    will follow the same pattern, namely" (:verb "generate-TARGET") "and
+    will accept target-specific commandline options to the command.")
+
+  (:enhancement
+   "The new" (:verb "generate-dockerfile") "command can be used to
+    place into a specified output directory a Dockerfile with
+    supporting scripts that build one or more distributions within a
+    Docker container.")
+
+  (:enhancement
+   "The new" (:verb "generate-makefile") "command can be used to write
+    a Makefile into a specified output directory. When executed that
+    Makefile builds and/or installs one or more distributions in the
+    filesystem.")
+
+  (:enhancement
+   "The new" (:verb "build") "command builds or installs one or more
+    distributions in the filesystem under the direct control of the
+    generator process.")
+
+  (:enhancement
+   "Use HTTPS URL scheme in download URL for" (:verb "jenkins.war") ". The
+    download server now seems to reply with a 308 redirect otherwise.")
+
+  (:enhancement
+   "Consume and produce both the current and the legacy Jenkins permission
+    configuration format.")
+
+  (:enhancement
+   "Git LFS (large file storage) is now supported.")
+
+  (:enhancement
+   "The commands" (:verb "build") "," (:verb "generate-dockerfile") "and"
+   (:verb "generate-makefile") "now handle arguments to directory-related
+   commandline options better when the trailing slash is omitted."))
+
+ (:release "0.34" "2022-05-31"
+
+  (:enhancement
+   "The parameters aspect now supports the parameter kind
+    \"password\". However, a default value cannot be specified for
+    parameters of this kind.")
+
+  (:enhancement
+   "When a variant of the" (:verb "--on-error ") "commandline option is
+    supplied, errors during the analysis of a git repository (for example
+    due to the repository being private) should no longer prevent the
+    generation of a basic SCM configuration for the corresponding job.")
+
+  (:bugfix
+   "The" (:verb "install-jenkins") "command is now more careful about
+    downloading plugin versions that are compatible with the downloaded
+    Jenkins core. The command also tries to prevent newer Jenkins versions
+    from entering the setup wizard when started for the first time.")
+
+  (:bugfix
+   "Configurations involving the" (:verb "warnings-ng") "plugin should no
+    longer break with every update of the plugin (Thanks to Robert Haschke).")
+
+  (:bugfix
+   "The variables" (:verb "scm.username") "and" (:verb "scm.password")
+   "are handled correctly."))
+
+ (:release "0.33" "2020-12-07"
+
+  (:incompatible-change
+   "The following Jenkins plugins have been deprecated and seem to no
+    longer be available for download:"
+   (:ul
+    "Warnings"
+    "Task Scanner"
+    "Checkstyle"
+    "PMD")
+   "For this reason, the generator no longer attempts to install the
+    plugins when installing a new Jenkins instance. The \"Warnings
+    NG\" plugin has replaced the above plugins. The generator
+    therefore now generates configuration data for the \"Warnings NG\"
+    plugin by default."
+   "For Jenkins instances that have the deprecated plugins installed,
+    the previous generator behavior can be selected by setting the
+    following variables:"
+   (:verb
+    "-D aspect.checkstyle.implementation=legacy
+-D aspect.pmd.implementation=legacy
+-D aspect.tasks.implementation=legacy
+-D aspect.warnings.implementation=legacy"))
 
   (:enhancement
    "The variable" (:verb "message") "can be used to specify a message
@@ -14,7 +124,29 @@ message: >-
 
   Generated the following jobs:
 
-  @{job-list}")))
+  @{job-list}"))
+
+  (:enhancement
+   "The" (:verb "!b!include FILENAME") "and"
+    (:verb "!b!literal-include FILENAME") "constructs can now refer to
+    the to-be-included file in three ways"
+   (:ul
+    ((:verb "FILENAME-NOT-STARTING-WITH-/") "is interpreted as a
+     filename relative to the directory of the recipe file in which
+     the include construct occurs.")
+    ((:verb "/REST-OF-FILENAME-NOT-STARTING-WITH-/") "is interpreted
+     as an absolute filename.")
+    ((:verb "//REST-OF-FILENAME") "is interpreted as a filename
+     relative to the root directory of the repository containing the
+     recipe file in which the include construct occurs, that
+     is" (:verb "REPOSITORY-ROOT/REST-OF-FILENAME") "."))
+   "So assuming a repository" (:verb "/home/recipes") "containing a
+    recipe" (:verb "/home/recipes/projects/my-project.project") ",
+    include filename would be resolved as follows"
+   (:verb
+    "!b!include patches/patch.diff            → /home/recipes/projects/patches/patch.diff
+!b!include /usr/share/patches/patch.diff → /usr/share/patches/patch.diff
+!b!include //patches/patch.diff          → /home/recipes/patches/patch.diff")))
 
  (:release "0.32" "2019-10-29"
 

@@ -1,6 +1,6 @@
 ;;;; build-generator.asd --- System definition for the build-generator system
 ;;;;
-;;;; Copyright (C) 2011-2020 Jan Moringen
+;;;; Copyright (C) 2011-2022 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -18,7 +18,7 @@
                 (:version "let-plus"                                     "0.1")
                 (:version "optima"                                       "1.0")
                 (:version "more-conditions"                              "0.1.0")
-                (:version "utilities.print-items"                        "0.1.0")
+                (:version "utilities.print-items"                        "0.3.0")
                 (:version "utilities.print-tree"                         "0.1.0")
                 "local-time"
                 "lparallel"
@@ -184,8 +184,10 @@
                               "model-aspects")
                  :serial     t
                  :components ((:file     "package")
+                              (:file     "util")
                               (:file     "conditions")
                               (:file     "protocol")
+                              (:file     "mixins")
                               (:file     "defaults")))
 
                 (:module     "deployment-jenkins"
@@ -196,9 +198,49 @@
                               "deployment")
                  :serial     t
                  :components ((:file     "package")
+                              (:file     "util")
                               (:file     "target")
                               (:file     "distribution")
                               (:file     "job")))
+
+                (:module     "deployment-dockerfile"
+                 :pathname   "src/deployment/dockerfile"
+                 :depends-on ("model"
+                              "model-project"
+                              "model-aspects"
+                              "deployment")
+                 :serial     t
+                 :components ((:file     "package")
+                              (:file     "util")
+                              (:file     "model")
+                              (:file     "output")
+                              (:file     "target")
+                              (:file     "aspects")))
+
+                (:module     "deployment-makefile"
+                 :pathname   "src/deployment/makefile"
+                 :depends-on ("model"
+                              "model-project"
+                              "model-aspects"
+                              "deployment")
+                 :serial     t
+                 :components ((:file     "package")
+                              (:file     "util")
+                              (:file     "target")
+                              (:file     "aspects")))
+
+                (:module     "deployment-build"
+                 :pathname   "src/deployment/build"
+                 :depends-on ("model"
+                              "model-project"
+                              "model-aspects"
+                              "deployment")
+                 :serial     t
+                 :components ((:file     "package")
+                              (:file     "model")
+                              (:file     "target")
+                              (:file     "aspects")
+                              (:file     "execution")))
 
                 (:module     "report"
                  :pathname   "src/report"

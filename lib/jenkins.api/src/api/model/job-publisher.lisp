@@ -1,6 +1,6 @@
 ;;;; job-publisher.lisp --- Model classes for publisher implementations .
 ;;;;
-;;;; Copyright (C) 2012-2020 Jan Moringen
+;;;; Copyright (C) 2012-2021, 2024 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -242,118 +242,42 @@
    (:name-slot nil))
 
   ((issues-recorder "io.jenkins.plugins.analysis.core.steps.IssuesRecorder"
-                    :plugin "warnings-ng@8.4.1")
-   ((analysis-tools                  :type      analysis-tool
-                                     :xpath     ("analysisTools/*"
-                                                 :if-multiple-matches :all)
-                                     :initform  '())
-    (filters                         :type      string
-                                     :xpath     ("filters/text()"
-                                                 :if-multiple-matches :all)
-                                     :optional? nil
-                                     :initform  '())
-    ;;
-    (ignore-quality-gate?            :type      boolean
-                                     :xpath     "ignoreQualityGate/text()"
-                                     :optional? nil
-                                     :initform  nil)
-    (ignore-failed-builds?           :type      boolean
-                                     :xpath     "ignoreFailedBuilds/text()"
-                                     :optional? nil
-                                     :initform  nil)
+                    :plugin "warnings-ng@8.10.1")
+   ((analysis-tools          :type      analysis-tool
+                             :xpath     ("analysisTools/*"
+                                         :if-multiple-matches :all)
+                             :initform  '())
+    (filters                 :type      string
+                             :xpath     ("filters/text()"
+                                         :if-multiple-matches :all)
+                             :optional? nil
+                             :initform  '())
+    ;; Control
+    (is-enabled-for-failure? :type      boolean
+                             :xpath     "isEnabledForFailure/text()"
+                             :initform  t)
+    (ignore-quality-gate?    :type      boolean
+                             :xpath     "ignoreQualityGate/text()"
+                             :optional? nil
+                             :initform  nil)
     ;; Assessment
-    (healthy-threshold               :type      non-negative-integer
-                                     :xpath     "healthy/text()"
-                                     :optional? nil
-                                     :initform  0)
-    (unhealthy-threshold             :type      non-negative-integer
-                                     :xpath     "unhealthy/text()"
-                                     :optional? nil
-                                     :initform  0)
-    (minimum-severity                :type      string
-                                     :xpath     (:version
-                                                 ("warnings-ng@8.4.1" "minimumSeverity[@plugin='analysis-model-api@8.2.1']/name/text()")
-                                                 ("warnings-ng@7.2.2" "minimumSeverity[@plugin='analysis-model-api@7.0.2']/name/text()")
-                                                 ("warnings-ng@7.2.1" "minimumSeverity[@plugin='analysis-model-api@7.0.2']/name/text()")
-                                                 ("warnings-ng@7.0.0" "minimumSeverity[@plugin='analysis-model-api@7.0.1']/name/text()")
-                                                 ("warnings-ng@5.1.0" "minimumSeverity[@plugin='analysis-model-api@5.1.1']/name/text()")
-                                                 ("warnings-ng@4.0.0" "minimumSeverity[@plugin='analysis-model-api@3.0.0']/name/text()")
-                                                 ("warnings-ng@3.0.3" "minimumSeverity[@plugin='analysis-model-api@2.1.2']/name/text()")
-                                                 ("warnings-ng@2.1.2" "minimumSeverity[@plugin='analysis-model-api@2.0.2']/name/text()")
-                                                 ("warnings-ng@2.0.0" "minimumSeverity[@plugin='analysis-model-api@2.0.1']/name/text()")
-                                                 ("warnings-ng@1.0.1" "minimumSeverity[@plugin='analysis-model-api@1.0.0']/name/text()")
-                                                 (t                   "minimumSeverity[@plugin='analysis-model-api@3.0.0']/name/text()"))
-                                     :optional? nil
-                                     :initform  "HIGH")
-    (threshold-unstable-total-all    :type      non-negative-integer
-                                     :xpath     "thresholds/unstableTotalAll/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-unstable-total-high   :type      non-negative-integer
-                                     :xpath     "thresholds/unstableTotalHigh/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-unstable-total-normal :type      non-negative-integer
-                                     :xpath     "thresholds/unstableTotalNormal/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-unstable-total-low    :type      non-negative-integer
-                                     :xpath     "thresholds/unstableTotalLow/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-unstable-new-all      :type      non-negative-integer
-                                     :xpath     "thresholds/unstableNewAll/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-unstable-new-high     :type      non-negative-integer
-                                     :xpath     "thresholds/unstableNewHigh/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-unstable-new-normal   :type      non-negative-integer
-                                     :xpath     "thresholds/unstableNewNormal/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-unstable-new-low      :type      non-negative-integer
-                                     :xpath     "thresholds/unstableNewLow/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-failed-total-all      :type      non-negative-integer
-                                     :xpath     "thresholds/failedTotalAll/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-failed-total-high     :type      non-negative-integer
-                                     :xpath     "thresholds/failedTotalHigh/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-failed-total-normal   :type      non-negative-integer
-                                     :xpath     "thresholds/failedTotalNormal/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-failed-total-low      :type      non-negative-integer
-                                     :xpath     "thresholds/failedTotalLow/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-failed-new-all        :type      non-negative-integer
-                                     :xpath     "thresholds/failedNewAll/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-failed-new-high       :type      non-negative-integer
-                                     :xpath     "thresholds/failedNewHigh/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-failed-new-normal     :type      non-negative-integer
-                                     :xpath     "thresholds/failedNewNormal/text()"
-                                     :optional? t
-                                     :initform  0)
-    (threshold-failed-new-low        :type      non-negative-integer
-                                     :xpath     "thresholds/failedNewLow/text()"
-                                     :optional? t
-                                     :initform  0)
+    (healthy-threshold       :type      non-negative-integer
+                             :xpath     "healthy/text()"
+                             :optional? nil
+                             :initform  0)
+    (unhealthy-threshold     :type      non-negative-integer
+                             :xpath     "unhealthy/text()"
+                             :optional? nil
+                             :initform  0)
+    (minimum-severity        :type      string
+                             :xpath     "minimumSeverity/name/text()"
+                             :optional? nil
+                             :initform  "HIGH")
     ;; Blame
-    (blame-disabled?                 :type      boolean
-                                     :xpath     "isBlameDisabled/text()"
-                                     :optional? nil
-                                     :initform  nil))
+    (blame-disabled?         :type      boolean
+                             :xpath     "isBlameDisabled/text()"
+                             :optional? nil
+                             :initform  nil))
    (:name-slot nil))
 
   ((checkstyle "hudson.plugins.checkstyle.CheckStylePublisher"
@@ -407,7 +331,10 @@
 
   ((sloccount "hudson.plugins.sloccount.SloccountPublisher"
               :plugin "sloccount@1.8")
-   ((pattern :type string))
+   ((pattern               :type     string)
+    (ignore-build-failure? :type     boolean
+                           :xpath    "ignoreBuildFailure/text()"
+                           :initform t))
    (:name-slot pattern))
 
   ((cobertura "hudson.plugins.cobertura.CoberturaPublisher"

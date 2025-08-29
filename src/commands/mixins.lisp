@@ -1,6 +1,6 @@
 ;;;; mixins.lisp --- Mixins classes used in the commands module.
 ;;;;
-;;;; Copyright (C) 2017, 2018, 2019 Jan Moringen
+;;;; Copyright (C) 2017-2022 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -28,8 +28,8 @@
                :reader   mode
                :initform "toolkit"
                :documentation
-               #.(format nil "The mode according to which jobs should ~
-                  be generated.~@
+               #.(format nil "The mode according to which build ~
+                  commands should be selected.~@
                   ~@
                   Selects the set of templates stored in the ~
                   templates/MODE directory."))
@@ -39,7 +39,7 @@
                :initform '()
                :documentation
                #.(format nil "Overwrite a variable after loading the ~
-                  distribution.~@
+                  distribution(s).~@
                   ~@
                   Arguments to this option have to be of the form ~
                   VARIABLE-NAME=VALUE.")))
@@ -59,49 +59,3 @@
                       'output-directory-mixin :output-directory))
   (:documentation
    "Adds an output-directory slot to command classes."))
-
-;;; `jenkins-access-mixin'
-
-(defclass jenkins-access-mixin ()
-  ((base-uri  :initarg  :base-uri
-              :type     puri:uri
-              :reader   base-uri
-              :initform (puri:uri "https://localhost:8080")
-              :documentation
-              "Jenkins base URI.")
-   (username  :initarg  :username
-              :type     (or null string)
-              :reader   username
-              :initform nil
-              :documentation
-              "Username for Jenkins authentication.")
-   (password  :initarg  :password
-              :type     (or null string)
-              :reader   password
-              :initform nil
-              :documentation
-              "Password for Jenkins authentication.")
-   (api-token :initarg  :api-token
-              :type     (or null string)
-              :reader   api-token
-              :initform nil
-              :documentation
-              "API token for Jenkins authentication."))
-  (:documentation
-   "Adds infrastructure for accessing a Jenkins server to command classes."))
-
-(defmethod command-execute :around ((command jenkins-access-mixin))
-  (let+ (((&accessors-r/o base-uri username password api-token) command)
-         (credentials (cond (api-token
-                             (jenkins.api:make-token-credentials
-                              username api-token))
-                            ((and username password)
-                             (jenkins.api:make-username+password-credentials
-                              username password))))
-         (endpoint    (jenkins.api:make-endpoint
-                       base-uri :credentials credentials)))
-    (jenkins.api:with-endpoint (endpoint)
-      (call-next-method))))
-
-(defmethod command-execute :before ((command jenkins-access-mixin))
-  (as-phase (:verify-jenkins) (jenkins.api::verify-jenkins)))

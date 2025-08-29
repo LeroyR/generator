@@ -8,7 +8,7 @@
 
 ;;; Tasks aspect
 
-(define-aspect (tasks :plugins ("tasks" "warnings-ng"))
+(define-aspect (tasks :plugins ("warnings-ng"))
     (publisher-defining-mixin)
     ((pattern               :type (var:list-of string)
       :documentation
@@ -27,7 +27,7 @@
      ((keywords.high   '()) :type (var:list-of string)
       :documentation
       "Keywords indicating high-priority open tasks.")
-     ((implementation  :legacy) :type (or (eql :legacy) (eql :ng))
+     ((implementation  :ng) :type (or (eql :legacy) (eql :ng))
       :documentation
       "Which of Jenkins' architectures for scanning and reporting
        warnings should be used?"))
@@ -103,22 +103,23 @@
                              (jenkins.api:analysis-tools issues-recorder))))
     (removef (jenkins.api:analysis-tools issues-recorder) parser))
   (push (make-instance 'jenkins.api:analysis-tool/groovy
-                       :id     (format nil "groovy-~(~A~)" parser)
-                       :name   (format nil "Groovy-based ~A parser"
-                                       parser)
-                       :parser parser)
+                       :id      (format nil "groovy-~(~A~)" parser)
+                       :name    (format nil "~@(~{~A~^ ~}~)"
+                                        (split-sequence #\- parser))
+                       :pattern (list (format nil "~(~A~)-output.log" parser))
+                       :parser  (string-downcase parser))
         (jenkins.api:analysis-tools issues-recorder)))
 
 (define-aspect (warnings :job-var job
-                         :plugins ("warnings"))
+                         :plugins ("warnings-ng"))
     (publisher-defining-mixin)
-    ((parsers                  :type (var:list-of string)
+    ((parsers              :type (var:list-of string)
       :documentation
       "Names of parsers to apply to the output of the generated job.
 
        Parsers can be either builtin or defined in the global Jenkins
        configuration.")
-     ((implementation :legacy) :type (or (eql :legacy) (eql :ng))
+     ((implementation :ng) :type (or (eql :legacy) (eql :ng))
       :documentation
       "Which of Jenkins' architectures for scanning and reporting
        warnings should be used?"))
@@ -131,13 +132,15 @@
                      (let ((scanner (ppcre:create-scanner clause :case-insensitive-mode t)))
                        (ppcre:scan scanner parser))))
                   ((&flet install-parser (parser)
-                     (eswitch (parser :test #'match-parser)
+                     (switch (parser :test #'match-parser)
                        ;; Builtin
                        ("^gnu (?:c )?compiler 4 \\(gcc\\)$"
                         (install-parser/native
                          issues-recorder 'jenkins.api::analysis-tool/gcc4
                          "gcc4"))
                        ("^apple llvm compiler \\(clang\\)$")
+                       ("^cmake$"
+                        issues-recorder 'jenkins.api::analysis-tool/cmake "cmake")
                        ("^maven$"
                         (install-parser/native
                          issues-recorder 'jenkins.api::analysis-tool/maven "maven"))
@@ -147,14 +150,13 @@
                        ("^doxygen$")
                        ("^sphinx-build$")
                        ;; Groovy-based
-                       ("^cmake$"
-                        (install-parser/native
-                         issues-recorder 'jenkins.api::analysis-tool/cmake "cmake"))
                        ("^build generator$"
                         (install-parser/groovy issues-recorder "build-generator"))
                        ("^build generator dependencies$"
                         (install-parser/groovy
-                         issues-recorder "build-generator-dependencies"))))))
+                         issues-recorder "build-generator-dependencies"))
+                       (t
+                        (install-parser/groovy issues-recorder parser))))))
              (map nil #'install-parser parsers))))
 
         ((eq implementation :legacy)
@@ -175,11 +177,11 @@
        `(define-aspect (,name :job-var job
                               :plugins ,plugins)
             (publisher-defining-mixin)
-            ((pattern                  :type list
+            ((pattern              :type list
               :documentation
               "Analysis results should be read from files matching the
                pattern.")
-             ((implementation :legacy) :type (or (eql :legacy) (eql :ng))
+             ((implementation :ng) :type (or (eql :legacy) (eql :ng))
               :documentation
               "Which of Jenkins' architectures for scanning and
                reporting warnings should be used?"))
@@ -205,10 +207,10 @@
                      (jenkins.api:publishers job))))))))
   (define checkstyle (jenkins.api:analysis-tool/checkstyle "checkstyle")
                      (jenkins.api:publisher/checkstyle     "CheckStyle")
-                     ("warnings-ng" "checkstyle"))
+                     ("warnings-ng"))
   (define pmd        (jenkins.api:analysis-tool/pmd        "pmd")
                      (jenkins.api:publisher/pmd            "PMD")
-                     ("warnings-ng" "pmd")))
+                     ("warnings-ng")))
 
 ;;; Test result aspects
 

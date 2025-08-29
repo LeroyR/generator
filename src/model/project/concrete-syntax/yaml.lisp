@@ -6,19 +6,12 @@
 
 (cl:in-package #:build-generator.model.project)
 
-(defun %load-yaml (source
-                   &key
-                   (file    (if (pathnamep source)
-                                source
-                                (error "Must supply ~S when source is a string"
-                                       :file)))
-                   (content (cond ((pathnamep source)
-                                   (read-file-into-string source))
-                                  ((stringp source)
-                                   source))))
-  (let* ((source* (apply #'text.source-location:make-source file
-                         (when content (list :content content))))
-         (builder (make-builder source*)))
+(defun %load-yaml (file &key (root-path nil root-path-supplied?))
+  (let* ((source  (text.source-location:make-source
+                   file :content (read-file-into-string file)))
+         (builder (apply #'make-builder source
+                         (when root-path-supplied?
+                           (list :root-path root-path)))))
     (handler-case
         (values (language.yaml:load source :builder builder) file source*)
       (esrap:esrap-parse-error (condition)
@@ -170,27 +163,30 @@
          (load-name  (symbolicate '#:load-  concept '#:/yaml))
          (context    (format nil "~(~A~) recipe" concept)))
     `(progn
-       (defun ,read-name (source &key pathname repository generator-version ,@other-args)
-         (declare (ignore ,@other-args))
-         (let+ (((&values spec pathname source)
-                 (apply #'%load-yaml source
-                        (when pathname
-                          (list :file pathname)))))
+       (defun ,read-name (pathname &key repository generator-version ,@other-args)
+         (declare (ignore ,@other-args
+                          ,@(when (eq name-kind :data) '(repository))))
+         (let+ (,@(when (eq name-kind :pathname)
+                    `(((&values name repository)
+                       (recipe-name
+                        repository
+                        ,(ecase concept
+                           (one-template     :template)
+                           (one-distribution :distribution)
+                           (project-spec     :project))
+                        pathname))))
+                (spec (%load-yaml
+                       pathname
+                       ,@(when (eq name-kind :pathname)
+                           `(:root-path (root-directory repository)))))
+                ,@(when (eq name-kind :data)
+                    `((name (assoc-value spec :name)))))
            (check-keys spec '((:minimum-generator-version nil string)
                               ,@(when (eq name-kind :data)
                                   '((:name t string)))
                               ,@keys))
            (check-generator-version spec generator-version ,context)
-           (let ((name ,@(ecase name-kind
-                           (:data     `((assoc-value spec :name)))
-                           (:pathname `((recipe-name
-                                         repository
-                                         ,(ecase concept
-                                            (one-template     :template)
-                                            (one-distribution :distribution)
-                                            (project-spec     :project))
-                                         pathname))))))
-             (values spec name pathname source))))
+           (values spec name pathname)))
 
        (defun ,parse-name (,spec-var ,name-var &key ,@all-args)
          (declare (ignore ,@(set-difference all-args args)))

@@ -1,6 +1,6 @@
 ;;;; catalog.lisp --- Write XML catalog describing recipes.
 ;;;;
-;;;; Copyright (C) 2015, 2016, 2017, 2018, 2019 Jan Moringen
+;;;; Copyright (C) 2015-2022 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -181,11 +181,7 @@
                    (cxml:text value)))
            values))))
 
-(defun emit-system-dependencies (object
-                                 &key
-                                 (platforms '(("ubuntu" "trusty" "x86_64")
-                                              ("ubuntu" "xenial" "x86_64")
-                                              ("ubuntu" "bionic" "x86_64"))))
+(defun emit-system-dependencies (object platforms)
   (labels ((platform (name version &rest rest-spec)
              (when-let* ((platform (list* name version rest-spec))
                          (requires (with-simple-restart
@@ -204,7 +200,13 @@
            (dependency (dependency)
              (cxml:with-element "dependency"
                (cxml:text dependency))))
-    (map nil (curry #'apply #'platform) platforms)))
+    (if-let ((local-platforms (catalog-value object :platforms)))
+      (mapcar (lambda (platform)
+                (let ((platform (split-sequence:split-sequence
+                                 #\Space platform :remove-empty-subseqs t)))
+                  (apply #'platform platform)))
+              local-platforms)
+      (map nil (curry #'apply #'platform) platforms))))
 
 (defun emit-resources (object)
   (let+ (((&flet resource (type variable)
@@ -269,7 +271,12 @@
                  :reader   person-style
                  :initform nil)
    (persons      :accessor persons
-                 :initform '())))
+                 :initform '())
+   (platforms    :initarg  :platforms
+                 :reader   platforms
+                 :initform '(("ubuntu" "trusty" "x86_64")
+                             ("ubuntu" "xenial" "x86_64")
+                             ("ubuntu" "bionic" "x86_64")))))
 
 (defmethod report :around ((object t) (style catalog) (target stream))
   (with-condition-translation (((error report-error)
@@ -317,9 +324,14 @@
       ;; Dependencies
       (cxml:with-element "dependencies"
         ;; System dependencies
-        (emit-system-dependencies object)
+        (emit-system-dependencies object (platforms style))
         ;; Included projects
         (map nil #'project-version-dependency (project:versions object)))
+
+      (when-let ((replication (catalog-value object :replication)))
+        (cxml:with-element "replication" (cxml:text replication)))
+      (when-let ((message (var:value object :message nil)))
+        (cxml:with-element "message" (cxml:text message)))
 
       ;; Resources
       (emit-resources object)
@@ -378,7 +390,7 @@
       ;; Dependencies
       (cxml:with-element "dependencies"
         ;; System dependencies
-        (emit-system-dependencies object)
+        (emit-system-dependencies object (platforms style))
 
         ;; Project dependencies.
         (map nil #'project-version-dependency (model:direct-dependencies object)))
@@ -451,12 +463,15 @@
 ;;; Entry point
 
 (defmethod report ((object t) (style (eql :catalog)) (target t))
-  (let ((style  (make-instance 'catalog :gdpr? :opt-in))
-        (object (if (and (typep object '(and sequence (not null)))
-                         (typep (first-elt object) 'project:distribution))
-                    (make-instance 'distributions :distributions object)
-                    object)))
-    (report object style target)))
+  (destructuring-bind (target . platforms) target ; HACK
+    (let ((style  (apply #'make-instance 'catalog
+                         :gdpr? :opt-in
+                         (when platforms (list :platforms platforms))))
+          (object (if (and (typep object '(and sequence (not null)))
+                           (typep (first-elt object) 'project:distribution))
+                      (make-instance 'distributions :distributions object)
+                      object)))
+      (report object style target))))
 
 (defclass distributions ()
   ((distributions :initarg :distributions

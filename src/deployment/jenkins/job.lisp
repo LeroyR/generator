@@ -1,15 +1,13 @@
 ;;;; job.lisp --- Deployment of Jenkins jobs.
 ;;;;
-;;;; Copyright (C) 2012-2020 Jan Moringen
+;;;; Copyright (C) 2012-2022 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
 (cl:in-package #:build-generator.deployment.jenkins)
 
 (defmethod deploy:deploy ((thing project::job) (target target))
-  (let+ ((id        (substitute-if-not
-                     #\_ #'jenkins.api:job-name-character?
-                     (var:value/cast thing :build-job-name)))
+  (let+ ((id        (jenkins-job-id thing))
          (kind      (let+ (((kind &optional plugin)
                             (ensure-list (var:value thing :kind))))
                       (if plugin
@@ -34,7 +32,7 @@
 
               ;; Apply aspects, respecting declared ordering, and sort
               ;; generated builders according to declared ordering.
-              (aspects:extend! job (aspects:aspects thing) thing)
+              (aspects:extend! (aspects:aspects thing) thing job :jenkins)
 
               ;; TODO temp
               (xloc:->xml job (stp:root (jenkins.api::%data job)) 'jenkins.api:job/project)

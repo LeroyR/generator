@@ -22,18 +22,18 @@ jobs:
           git clone -b master https://github.com/scymtym/architecture.service-provider.git .
 
 
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -82,7 +82,7 @@ jobs:
           mv -v cl-architecture.service-provider-master.tar.gz artifacts/
 
       - name: upload-artifact-cl-architecture.service-provider@master
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-architecture.service-provider@master
           path: artifacts
@@ -106,18 +106,18 @@ jobs:
           git clone -b master https://github.com/scymtym/architecture.builder-protocol.git .
 
 
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -166,7 +166,7 @@ jobs:
           mv -v cl-architecture.builder-protocol-master.tar.gz artifacts/
 
       - name: upload-artifact-cl-architecture.builder-protocol@master
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: artifacts
@@ -190,18 +190,18 @@ jobs:
           git clone -b future https://github.com/scymtym/model.transform.trace.git .
 
 
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -250,7 +250,7 @@ jobs:
           mv -v cl-model.transform.trace-future.tar.gz artifacts/
 
       - name: upload-artifact-cl-model.transform.trace@future
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-model.transform.trace@future
           path: artifacts
@@ -275,32 +275,32 @@ jobs:
 
 
       - name: download-artifact-cl-model.transform.trace@future
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-model.transform.trace@future
           path: upstream
       - name: download-artifact-cl-architecture.builder-protocol@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: upstream
       - name: download-artifact-cl-architecture.service-provider@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.service-provider@master
           path: upstream
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -349,7 +349,7 @@ jobs:
           mv -v cl-text.source-location-future.tar.gz artifacts/
 
       - name: upload-artifact-cl-text.source-location@future
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-text.source-location@future
           path: artifacts
@@ -374,32 +374,32 @@ jobs:
 
 
       - name: download-artifact-cl-architecture.builder-protocol@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: upstream
       - name: download-artifact-cl-parser.ini@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-parser.ini@master
           path: upstream
       - name: download-artifact-cl-architecture.service-provider@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.service-provider@master
           path: upstream
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -423,8 +423,8 @@ jobs:
                    (:tree \""$(pwd)"\")                                       \
                    (:tree \"${WORKSPACE}/upstream/share/common-lisp/source\")      \
                    :ignore-inherited-configuration)"                           \
-            -s configuration.options/test -s configuration.options-syntax-xml/test -s configuration.options-syntax-ini/test -s configuration.options-source-commandline/test -s configuration.options-and-quri/test -s configuration.options-and-puri/test -s configuration.options-and-mop/test -s configuration.options-and-service-provider/test                                        \
-            '(mapc (function asdf:test-system) (list :configuration.options/test :configuration.options-syntax-xml/test :configuration.options-syntax-ini/test :configuration.options-source-commandline/test :configuration.options-and-quri/test :configuration.options-and-puri/test :configuration.options-and-mop/test :configuration.options-and-service-provider/test ))'
+            -s configuration.options/test -s configuration.options-syntax-xml/test -s configuration.options-syntax-ini/test -s configuration.options-and-quri/test -s configuration.options-and-puri/test -s configuration.options-and-mop/test -s configuration.options-and-service-provider/test                                        \
+            '(mapc (function asdf:test-system) (list :configuration.options/test :configuration.options-syntax-xml/test :configuration.options-syntax-ini/test :configuration.options-and-quri/test :configuration.options-and-puri/test :configuration.options-and-mop/test :configuration.options-and-service-provider/test ))'
 
 
 
@@ -448,7 +448,7 @@ jobs:
           mv -v cl-configuration.options-master.tar.gz artifacts/
 
       - name: upload-artifact-cl-configuration.options@master
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-configuration.options@master
           path: artifacts
@@ -473,22 +473,22 @@ jobs:
 
 
       - name: download-artifact-cl-architecture.builder-protocol@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: upstream
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -537,7 +537,7 @@ jobs:
           mv -v cl-parser.ini-master.tar.gz artifacts/
 
       - name: upload-artifact-cl-parser.ini@master
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-parser.ini@master
           path: artifacts
@@ -562,22 +562,22 @@ jobs:
 
 
       - name: download-artifact-cl-architecture.builder-protocol@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: upstream
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -626,7 +626,7 @@ jobs:
           mv -v cl-language.yaml-future.tar.gz artifacts/
 
       - name: upload-artifact-cl-language.yaml@future
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-language.yaml@future
           path: artifacts
@@ -651,37 +651,37 @@ jobs:
 
 
       - name: download-artifact-cl-model.transform.trace@future
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-model.transform.trace@future
           path: upstream
       - name: download-artifact-cl-architecture.builder-protocol@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: upstream
       - name: download-artifact-cl-architecture.service-provider@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.service-provider@master
           path: upstream
       - name: download-artifact-cl-text.source-location@future
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-text.source-location@future
           path: upstream
       - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: sbcl@master
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -732,12 +732,12 @@ jobs:
           mv -v cl-protocol.language-server-future.tar.gz artifacts/
 
       - name: upload-artifact-cl-protocol.language-server@future
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-protocol.language-server@future
           path: artifacts
 
-  rosetta-cl_master:
+  rosetta-cl_main:
     runs-on: ubuntu-20.04
     needs: [cl-launch_master,quicklisp_current,cl-architecture_service-provider_master,cl-architecture_builder-protocol_master]
     steps:
@@ -753,31 +753,31 @@ jobs:
       - name: git.repository
         run: |
           export WORKSPACE=$(pwd)
-          git clone -b master https://code.cor-lab.de/git/rosetta.git.cl .
+          git clone -b main https://github.com/rdtk/rosetta .
 
 
       - name: download-artifact-cl-architecture.builder-protocol@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: upstream
       - name: download-artifact-cl-architecture.service-provider@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.service-provider@master
           path: upstream
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -812,28 +812,28 @@ jobs:
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
-            --transform 's#^\.\(.*\)#rosetta-cl-master\1#'            \
+            --transform 's#^\.\(.*\)#rosetta-cl-main\1#'            \
             --exclude sloccount.sc --exclude fasl-cache --exclude upstream --exclude .git --exclude .svn  \
             -czf "${temp}"                                                         \
             .
-          mv "${temp}" "rosetta-cl-master.tar.gz"
+          mv "${temp}" "rosetta-cl-main.tar.gz"
 
 
       - name: gather-artifacts
         run: |
           export WORKSPACE=$(pwd)
           mkdir -p artifacts
-          mv -v rosetta-cl-master.tar.gz artifacts/
+          mv -v rosetta-cl-main.tar.gz artifacts/
 
-      - name: upload-artifact-rosetta-cl@master
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-rosetta-cl@main
+        uses: actions/upload-artifact@v4
         with:
-          name: rosetta-cl@master
+          name: rosetta-cl@main
           path: artifacts
 
-  rosetta-project-cl_master:
+  rosetta-project-cl_main:
     runs-on: ubuntu-20.04
-    needs: [cl-launch_master,quicklisp_current,cl-architecture_builder-protocol_master,rosetta-cl_master]
+    needs: [cl-launch_master,quicklisp_current,cl-architecture_builder-protocol_master,rosetta-cl_main]
     steps:
       - name: install-platform-dependencies
         run: |
@@ -847,36 +847,36 @@ jobs:
       - name: git.repository
         run: |
           export WORKSPACE=$(pwd)
-          git clone -b master https://code.cor-lab.de/git/rosetta.git.project-cl .
+          git clone -b main https://github.com/rdtk/rosetta-project .
 
 
       - name: download-artifact-cl-architecture.service-provider@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.service-provider@master
           path: upstream
-      - name: download-artifact-rosetta-cl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-rosetta-cl@main
+        uses: actions/download-artifact@v4
         with:
-          name: rosetta-cl@master
+          name: rosetta-cl@main
           path: upstream
       - name: download-artifact-cl-architecture.builder-protocol@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: upstream
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -911,28 +911,28 @@ jobs:
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
-            --transform 's#^\.\(.*\)#rosetta-project-cl-master\1#'            \
+            --transform 's#^\.\(.*\)#rosetta-project-cl-main\1#'            \
             --exclude sloccount.sc --exclude fasl-cache --exclude upstream --exclude .git --exclude .svn  \
             -czf "${temp}"                                                         \
             .
-          mv "${temp}" "rosetta-project-cl-master.tar.gz"
+          mv "${temp}" "rosetta-project-cl-main.tar.gz"
 
 
       - name: gather-artifacts
         run: |
           export WORKSPACE=$(pwd)
           mkdir -p artifacts
-          mv -v rosetta-project-cl-master.tar.gz artifacts/
+          mv -v rosetta-project-cl-main.tar.gz artifacts/
 
-      - name: upload-artifact-rosetta-project-cl@master
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-rosetta-project-cl@main
+        uses: actions/upload-artifact@v4
         with:
-          name: rosetta-project-cl@master
+          name: rosetta-project-cl@main
           path: artifacts
 
   build-generator_wip-language-server:
     runs-on: ubuntu-20.04
-    needs: [cl-launch_master,quicklisp_current,cl-configuration_options_master,cl-language_yaml_future,cl-text_source-location_future,rosetta-cl_master,rosetta-project-cl_master,cl-protocol_language-server_future]
+    needs: [cl-launch_master,quicklisp_current,cl-configuration_options_master,cl-language_yaml_future,cl-text_source-location_future,rosetta-cl_main,rosetta-project-cl_main, cl-protocol_language-server_future]
     steps:
       - name: install-platform-dependencies
         run: |
@@ -944,72 +944,73 @@ jobs:
 
 
       - name: git.repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: download-artifact-cl-protocol.language-server@future
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-protocol.language-server@future
           path: upstream
-      - name: download-artifact-rosetta-project-cl@master
-        uses: actions/download-artifact@v1
+
+      - name: download-artifact-rosetta-project-cl@main
+        uses: actions/download-artifact@v4
         with:
-          name: rosetta-project-cl@master
+          name: rosetta-project-cl@main
           path: upstream
-      - name: download-artifact-rosetta-cl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-rosetta-cl@main
+        uses: actions/download-artifact@v4
         with:
-          name: rosetta-cl@master
+          name: rosetta-cl@main
           path: upstream
       - name: download-artifact-cl-model.transform.trace@future
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-model.transform.trace@future
           path: upstream
       - name: download-artifact-cl-text.source-location@future
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-text.source-location@future
           path: upstream
       - name: download-artifact-cl-language.yaml@future
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-language.yaml@future
           path: upstream
       - name: download-artifact-cl-architecture.builder-protocol@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.builder-protocol@master
           path: upstream
       - name: download-artifact-cl-parser.ini@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-parser.ini@master
           path: upstream
       - name: download-artifact-cl-architecture.service-provider@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-architecture.service-provider@master
           path: upstream
       - name: download-artifact-cl-configuration.options@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-configuration.options@master
           path: upstream
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
       - name: download-artifact-cl-launch@master
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cl-launch@master
           path: upstream
@@ -1025,7 +1026,7 @@ jobs:
           # Get precise version from git and write into version-string.sexp
           tag='release-*'
           git describe --long --dirty=-dirty --tags --match "${tag}"                              \
-            | sed -re 's/release-([0-9])+\.([0-9]+)-([0-9]+)-(.*)/echo "\\"\1.$((\2 + 1)).\3\\""/' \
+            | sed -re 's/release-([0-9])+\.([0-9]+(\.[0-9]+)?)-([0-9]+)-(.*)/echo "\\"\1.\2.\4\\""/' \
             | sh                                                                                   \
             > version-string.sexp
 
@@ -1071,30 +1072,30 @@ jobs:
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar                                                                       \
-            --transform 's#^\.\(.*\)#build-generator-wip-language-server\1#'            \
+            --transform 's#^\.\(.*\)#build-generator-master\1#'            \
             --exclude sloccount.sc --exclude fasl-cache --exclude upstream --exclude install --exclude .git --exclude .svn  \
             -czf "${temp}"                                                         \
             .
-          mv "${temp}" "build-generator-wip-language-server.tar.gz"
+          mv "${temp}" "build-generator-master.tar.gz"
 
 
           # Package installed artifacts
-          tar -czf build-generator-wip-language-server-install.tar.gz install
+          tar -czf build-generator-master-install.tar.gz install
 
 
       - name: gather-artifacts
         run: |
           export WORKSPACE=$(pwd)
           mkdir -p artifacts
-          mv -v build-generator-wip-language-server.tar.gz  build-generator-wip-language-server-install.tar.gz  install/bin/build-generator artifacts/
+          mv -v build-generator-master.tar.gz  build-generator-master-install.tar.gz  install/bin/build-generator artifacts/
 
-      - name: upload-artifact-build-generator@wip-language-server
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-build-generator@master
+        uses: actions/upload-artifact@v4
         with:
-          name: build-generator@wip-language-server
+          name: build-generator@master
           path: artifacts
 
-  sbcl_master:
+  sbcl_sbcl-2_5_2:
     runs-on: ubuntu-20.04
     steps:
       - name: install-platform-dependencies
@@ -1102,14 +1103,20 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount zlib1g-dev time make sbcl gcc git
+                sloccount libzstd-dev time make sbcl gcc git
 
-
+      - name: install host sbcl
+        run: |
+          cd /tmp/
+          wget -q https://github.com/sbcl/sbcl/releases/download/sbcl-1.4.14/sbcl-2.4.8-x86-64-linux-binary.tar.bz2
+          tar xf sbcl-2.4.8-x86-64-linux-binary.tar.bz2
+          cd sbcl-2.4.8-x86-64-linux/
+          sudo ./install.sh
 
       - name: git.repository
         run: |
           export WORKSPACE=$(pwd)
-          git clone -b master https://git.code.sf.net/p/sbcl/sbcl .
+          git clone -b sbcl-2.5.2 https://git.code.sf.net/p/sbcl/sbcl .
 
 
       - name: freestyle.shell
@@ -1117,9 +1124,8 @@ jobs:
           export WORKSPACE=$(pwd)
 
           sh make.sh \
-            --xc-host="sbcl --no-sysinit --no-userinit" \
-            --fancy \
-
+            --xc-host="sbcl --dynamic-space-size 700MB --no-sysinit --no-userinit" \
+            --fancy
 
 
           # later ( cd tests && sh run-tests.sh )
@@ -1134,15 +1140,15 @@ jobs:
           mkdir -p artifacts
           mv -v sbcl.tar.gz artifacts/
 
-      - name: upload-artifact-sbcl@master
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-sbcl@sbcl-2.5.2
+        uses: actions/upload-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: artifacts
 
   cl-launch_master:
     runs-on: ubuntu-20.04
-    needs: [quicklisp_current,sbcl_master]
+    needs: [quicklisp_current,sbcl_sbcl-2_5_2]
     steps:
       - name: install-platform-dependencies
         run: |
@@ -1159,13 +1165,13 @@ jobs:
           git clone -b master https://gitlab.common-lisp.net/xcvb/cl-launch.git .
 
 
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: download-artifact-quicklisp@current
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: quicklisp@current
           path: upstream
@@ -1219,14 +1225,14 @@ jobs:
           mv -v cl-launch-master.tar.gz artifacts/
 
       - name: upload-artifact-cl-launch@master
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: cl-launch@master
           path: artifacts
 
   quicklisp_current:
     runs-on: ubuntu-20.04
-    needs: [sbcl_master]
+    needs: [sbcl_sbcl-2_5_2]
     steps:
       - name: install-platform-dependencies
         run: |
@@ -1237,10 +1243,10 @@ jobs:
 
 
 
-      - name: download-artifact-sbcl@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-sbcl@sbcl-2.5.2
+        uses: actions/download-artifact@v4
         with:
-          name: sbcl@master
+          name: sbcl@sbcl-2.5.2
           path: upstream
       - name: extract-upstream-artiacts
         run: |
@@ -1292,7 +1298,7 @@ jobs:
           mv -v quicklisp-current.tar.gz artifacts/
 
       - name: upload-artifact-quicklisp@current
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: quicklisp@current
           path: artifacts

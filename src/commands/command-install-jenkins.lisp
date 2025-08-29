@@ -1,6 +1,6 @@
 ;;;; command-install-jenkins.lisp --- Install a Jenkins instance.
 ;;;;
-;;;; Copyright (C) 2017, 2018, 2019 Jan Moringen
+;;;; Copyright (C) 2017-2023, 2025 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -29,7 +29,7 @@
        :test #'string=))))
 
 (defparameter *default-extra-plugins*
-  '("extra-columns"))
+  '("extra-columns" "permissive-script-security"))
 
 ;;; Jenkins installation profiles
 
@@ -42,15 +42,15 @@
                    :reader  extra-plugins)))
 
 (defmethod print-items:print-items append ((object profile))
-  `((:name ,(name object) "~A")))
+  `((:name "~A" ,(name object))))
 
 (defparameter *profiles*
   (flet ((profile (name &optional extra-plugins)
-           `(,name . ,(make-instance 'profile
-                                     :name          name
-                                     :extra-plugins extra-plugins))))
+           `(,name . ,(make-instance 'profile :name          name
+                                              :extra-plugins extra-plugins))))
     `(,(profile :single-user)
-      ,(profile :local-docker '("docker-plugin")))))
+      ,(profile :local-docker    '("docker-plugin"))
+      ,(profile :legacy-warnings '("tasks" "warnings" "pmd" "checkstyle")))))
 
 (defun find-profile (name)
   (assoc-value *profiles* name))
@@ -64,21 +64,21 @@
                             Jenkins installation."))
    ;; Profile
    (profile              :initarg  :profile
-                         :type     (member :single-user :local-docker)
+                         :type     null
                          :reader   profile
-                         :initform :single-user
+                         :initform nil
                          :documentation
                          #.(format nil "A Jenkins usage profile to ~
                             which the installation should be ~
                             tailored."))
    ;; Jenkins download
    (jenkins-download-url :initarg  :jenkins-download-url
-                         :type     puri:uri
+                         :type     (or null puri:uri)
                          :reader   jenkins-download-url
-                         :initform steps:+default-jenkins-download-url+
+                         :initform nil
                          :documentation
                          #.(format nil "URL from which the Jenkins ~
-                            archive should be downloaded."))
+                            core archive should be downloaded."))
    (plugins              :initarg  :plugins
                          :type     (or null (cons string list))
                          :reader   plugins
@@ -125,6 +125,19 @@
       • Optionally, if username, email and password are supplied, set ~
         up a user account.")))
 
+;;; Adjust type and initform of the profile slot based on the profiles
+;;; in `*profiles*'.
+(let* ((class        (find-class 'install-jenkins))
+       (direct-slots (c2mop:class-direct-slots class))
+       (slot         (find 'profile direct-slots
+                           :key #'c2mop:slot-definition-name))
+       (profiles     (map 'list #'car *profiles*))
+       (default      (first profiles)))
+  (reinitialize-instance slot :type         `(member ,@profiles)
+                              :initform     default
+                              :initfunction (constantly default))
+  (reinitialize-instance class))
+
 (service-provider:register-provider/class
  'command :install-jenkins :class 'install-jenkins)
 
@@ -166,7 +179,8 @@
          (extra-plugins    (extra-plugins profile))
          (all-plugins      (remove-duplicates
                             (append required-plugins extra-plugins plugins)
-                            :test #'string=)))
+                            :test #'string=))
+         (jenkins-version))
     (log:info "~@<Installing profile ~A with plugins~@:_~
                  ~2@Trequired     ~<~{~A~^, ~}~@:>~@:_~
                  ~2@Tfrom profile ~<~{~A~^, ~}~@:>~@:_~
@@ -175,17 +189,29 @@
               profile
               (list required-plugins) (list extra-plugins) (list plugins))
     (as-phase (:install)
-      (with-trivial-progress (:install/core)
-        (steps:execute (steps:make-step :jenkins/install-core) nil
-                       :destination-directory output-directory
-                       :url                   jenkins-download-url))
+      (multiple-value-bind (update-info core-version core-url)
+          (steps:execute (steps:make-step :jenkins/get-update-info) nil)
+        (log:info "~@<From update info, got core version ~A and URL ~A.~@:>"
+                  core-version core-url)
+        (with-trivial-progress (:install/core)
+          (steps:execute (steps:make-step :jenkins/install-core) nil
+                         :destination-directory output-directory
+                         :url                   (or jenkins-download-url
+                                                    core-url))
+          (setf jenkins-version
+                (steps:execute (steps:make-step :jenkins/determine-version) nil
+                               :destination-directory output-directory)))
 
-      (steps:execute
-       (steps:make-step :jenkins/install-plugins-with-dependencies) nil
-       :destination-directory output-directory
-       :plugins               all-plugins))
+        (steps:execute
+         (steps:make-step :jenkins/install-plugins) nil
+         :update-info           update-info
+         :destination-directory output-directory
+         :plugins               all-plugins)))
 
     (as-phase (:configure)
+      (steps:execute (steps:make-step :jenkins/write-wizard-state) nil
+                     :destination-directory output-directory
+                     :version               jenkins-version)
       (steps:execute (steps:make-step :jenkins/install-config-files) nil
                      :destination-directory output-directory
                      :profile               (name profile))
@@ -195,4 +221,7 @@
                        :destination-directory output-directory
                        :username              username
                        :email                 email
-                       :password              password)))))
+                       :password              password)))
+
+    (format t "~@<Installed Jenkins version ~A into ~A.~@:>~%"
+            jenkins-version output-directory)))
